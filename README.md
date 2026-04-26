@@ -113,12 +113,12 @@ go test ./services/...
 ### 2. ไม่มีระบบ Authentication
 ผู้ใช้ทุกคนสามารถสร้าง, pin, หรือลบประกาศได้ ถ้าเพิ่ม ระบบ authentication จะทำให้กำหนดสิทธิ์ได้ว่าใครสามารถจัดการประกาศได้บ้าง
 
-### 3. CORS เปิดรับทุก origin
-ปัจจุบัน backend ตั้งค่า `Access-Control-Allow-Origin: *` เหมาะสำหรับ local development แต่ใน production ควรจำกัดให้รับเฉพาะ domain ที่กำหนดเท่านั้น
+### 3. ไม่มี pagination
+ปัจจุบันดึงประกาศทั้งหมดมาแสดงในครั้งเดียว ถ้าข้อมูลมีจำนวนมากจะทำให้โหลดช้า ควรเพิ่ม limit/offset หรือ cursor-based pagination
 
-### 4. ไม่มี pagination
-ปัจจุบันดึงประกาศทั้งหมดมาแสดงในครั้งเดียว ถ้าข้อมูลมีจำนวนมากจะทำให้โหลดช้า ควรเพิ่ม pagination หรือ infinite scroll
-
+### 4. AutoMigrate รันทุกครั้งที่ Start
+db.AutoMigrate(&models.Announcement{})
+ใช้ได้ใน development แต่ใน production ควรใช้ migration tool แทน เช่น golang-migrate เพราะ AutoMigrate ไม่รองรับ rollback และอาจทำให้ schema เปลี่ยนโดยไม่ได้ตั้งใจ
 
 ## สิ่งที่อยากเพิ่มถ้ามีเวลา
 
@@ -126,4 +126,5 @@ go test ./services/...
 - **Pagination** — โหลดประกาศทีละหน้าแทนการดึงทั้งหมดมาพร้อมกัน
 - **ค้นหาและกรองข้อมูล** — ค้นหาตามหัวข้อหรือกรองตามผู้เขียน
 - **แก้ไขประกาศ** — เพิ่มฟีเจอร์แก้ไขเนื้อหาประกาศที่มีอยู่แล้ว
+- **golang-migrate - เพราะเพิ่มลบ column ได้, รองรับ schema ที่มันซับซ้อน และ ป้องกัน data หายด้วย 
 - **Environment config** — แยก `.env` สำหรับ local และ production
