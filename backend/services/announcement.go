@@ -4,15 +4,16 @@ import (
 	"announcement-board/models"
 	"announcement-board/repositories"
 	"errors"
+	"strings"
 )
 
 // business logic ไว้คุยกับ repository เพื่อดึงข้อมูลจาก database มาแปรรูปก่อนส่งไปให้ handler
 type AnnouncementService struct {
-	repo *repositories.AnnouncementRepository
+	repo repositories.AnnouncementRepositoryInterface
 }
 
 // สร้าง instance ของ AnnouncementService
-func NewAnnouncementService(repo *repositories.AnnouncementRepository) *AnnouncementService {
+func NewAnnouncementService(repo repositories.AnnouncementRepositoryInterface) *AnnouncementService {
 	return &AnnouncementService{repo: repo}
 }
 
@@ -23,6 +24,9 @@ func (s *AnnouncementService) GetAll() ([]models.Announcement, error) {
 
 // สร้างประกาศใหม่
 func (s *AnnouncementService) CreateAnnouncementService(req *models.CreateRequest) (*models.Announcement, error) {
+	if strings.TrimSpace(req.Title) == "" || strings.TrimSpace(req.Body) == "" || strings.TrimSpace(req.Author) == ""{
+		return nil, errors.New("title, body, and author are required")
+	}
 	announcement := &models.Announcement{
 		Title:  req.Title,
 		Body:   req.Body,

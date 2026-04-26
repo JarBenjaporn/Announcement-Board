@@ -12,8 +12,16 @@ type AnnouncementRepository struct {
 	db *gorm.DB
 }
 
+type AnnouncementRepositoryInterface interface {
+	CreateNewAnnouncement(announcement *models.Announcement) error
+	FindAll() ([]models.Announcement, error)
+	FindByID(id string) (*models.Announcement, error)
+	UpdateAnnouncement(announcement *models.Announcement, req *models.CreateRequest) error
+	DeleteAnnouncement(id string) (bool, error)
+}
+
 // NewAnnouncementRepository สร้าง instance ของ AnnouncementRepository
-func NewAnnouncementRepository(db *gorm.DB) *AnnouncementRepository {
+func NewAnnouncementRepository(db *gorm.DB) AnnouncementRepositoryInterface {
 	return &AnnouncementRepository{db: db}
 }
 

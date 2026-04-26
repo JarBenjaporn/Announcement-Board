@@ -56,6 +56,7 @@ func (h *AnnouncementHandler) UpdateAnnouncementRequest(c *gin.Context){
 	announcement, err := h.service.UpdateAnnouncementService(id, &req)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "แก้ไขประกาศไม่สำเร็จ"})
+		return
 	}
 	c.JSON(http.StatusOK, announcement)
 }
