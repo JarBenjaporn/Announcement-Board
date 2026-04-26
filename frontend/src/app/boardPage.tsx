@@ -76,10 +76,20 @@ function CreateForm({ onSubmit }: { onSubmit: (data: CreateAnnouncement) => Prom
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async () => {
+
+    // check empty field
+    if (!title.trim() || !body.trim() || !author.trim()) {
+      toast.error("กรุณากรอกข้อมูลให้ครบทุกช่อง");
+      return;
+    }
+
     setSubmitting(true);
-    await onSubmit({ title, body, author, pinned: false });
-    setTitle(""); setBody(""); setAuthor("");
-    setSubmitting(false);
+    try {
+      await onSubmit({ title, body, author, pinned: false });
+      setTitle(""); setBody(""); setAuthor("");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -90,15 +100,15 @@ function CreateForm({ onSubmit }: { onSubmit: (data: CreateAnnouncement) => Prom
       <CardContent className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
             <Label>หัวข้อ</Label>
-            <Input placeholder="หัวข้อประกาศ" value={title} onChange={e => setTitle(e.target.value)} required />
+            <Input placeholder="หัวข้อประกาศ" value={title} onChange={e => setTitle(e.target.value)}/>
           </div>
           <div className="flex flex-col gap-1">
             <Label>เนื้อหา</Label>
-            <Textarea placeholder="รายละเอียดประกาศ" value={body} onChange={e => setBody(e.target.value)} className="min-h-[80px] resize-none" required />
+            <Textarea placeholder="รายละเอียดประกาศ" value={body} onChange={e => setBody(e.target.value)} className="min-h-[80px] resize-none"/>
           </div>
           <div className="flex flex-col gap-1">
             <Label>ผู้เขียน</Label>
-            <Input placeholder="ชื่อผู้เขียน" value={author} onChange={e => setAuthor(e.target.value)} required />
+            <Input placeholder="ชื่อผู้เขียน" value={author} onChange={e => setAuthor(e.target.value)}/>
           </div>
           <Button 
             onClick={() => void 
@@ -148,8 +158,9 @@ export function BoardPage() {
       await announcementService.createNewAnnouncement(data);
       await fetchAnnouncements();
       toast.success("สร้างประกาศใหม่สำเร็จ");
-    } catch {
+    } catch (err) {
       toast.error("สร้างไม่สำเร็จ กรุณาลองใหม่");
+      throw err;
     }
   };
 
