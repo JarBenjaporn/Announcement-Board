@@ -127,4 +127,3 @@ go test ./services/...
 - **ค้นหาและกรองข้อมูล** — ค้นหาตามหัวข้อหรือกรองตามผู้เขียน
 - **แก้ไขประกาศ** — เพิ่มฟีเจอร์แก้ไขเนื้อหาประกาศที่มีอยู่แล้ว
 - **Environment config** — แยก `.env` สำหรับ local และ production
-- **Integration tests** — ทดสอบ HTTP request/response แบบครบวงจร ไม่ใช่แค่ service layer
