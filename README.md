@@ -100,9 +100,26 @@ announcement-board/
 
 ## รัน Tests
 
+### Unit Tests (ไม่ใช้ database)
+
 ```bash
 cd backend
-go test ./services/...
+go test ./Test/... -run TestValidateCreateRequest -v
+```
+
+### Integration Tests (test database)
+
+สร้าง database สำหรับ test ก่อน (ทำครั้งเดียว):
+
+```bash
+docker exec -it announcement-board-db-1 psql -U postgres -c "CREATE DATABASE announcement_test;"
+```
+
+แล้วรัน test:
+
+```bash
+cd backend
+go test ./... -v
 ```
 
 ## Tradeoffs
