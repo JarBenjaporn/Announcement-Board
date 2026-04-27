@@ -91,8 +91,8 @@ announcement-board/
 │   ├── src/
 │   │   ├── pages/        # หน้าเว็บแต่ละหน้า
 │   │   ├── components/   # UI components ที่ใช้ซ้ำได้
-│   │   ├── services/     # เรียก API
-│   │   ├── types/        # TypeScript types
+│   │   ├── services/     # API ฝั่ง Frontend
+│   │   ├── types/        # types
 │   │   └── dialogs/      # Dialog components
 │   └── Dockerfile
 └── docker-compose.yml
