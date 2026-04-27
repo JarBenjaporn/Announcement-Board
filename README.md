@@ -109,7 +109,7 @@ go test ./Test/... -run TestValidateCreateRequest -v
 
 ### Integration Tests (test database)
 
-สร้าง database สำหรับ test ก่อน:
+สร้าง database สำหรับ test ก่อน ทำแค่ครั้งแรก:
 
 ```bash
 docker exec -it announcement-board-db-1 psql -U postgres -c "CREATE DATABASE announcement_test;"
