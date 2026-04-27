@@ -2,14 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Trash2 } from "lucide-react";
 
-interface Props {
+interface RemoveAnnouncementProps {
   title: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
 }
 
-export function RemoveAnnouncementDialog({ title, open, onOpenChange, onConfirm }: Props) {
+export function RemoveAnnouncementDialog({ title, open, onOpenChange, onConfirm }: RemoveAnnouncementProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[400px] flex flex-col items-center gap-6 py-8">

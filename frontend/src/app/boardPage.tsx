@@ -10,11 +10,11 @@ import { RemoveAnnouncementDialog } from "@/dialogs/removeAnnouncement";
 import { Loader, Pin, PinOff, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-
+import { FormatDate } from "@/lib/formatDate";
 
 
 function AnnouncementCard({
-  announcement: a,
+  announcement: announce,
   onDelete,
   onTogglePin,
 }: {
@@ -23,42 +23,38 @@ function AnnouncementCard({
   onTogglePin: (announcement: Announcement) => void;
 }) {
   return (
-    <Card className={`mb-3 ${a.pinned ? "bg-amber-50" : ""}`}>
+    <Card className={`mb-3 ${announce.pinned ? "bg-amber-50" : ""}`}>
       <CardContent className="pt-4">
         <div className="flex items-start justify-between gap-2 mb-2">
           <div className="flex flex-row items-center gap-2">
-            {a.pinned && (
+            {announce.pinned && (
               <Badge variant="secondary" className="bg-amber-100 text-amber-700">
                 Pinned
               </Badge>
             )}
-            <h2 className="text-base font-medium text-gray-900">{a.title}</h2>
+            <h2 className="text-base font-medium text-gray-900">{announce.title}</h2>
           </div>
           <button
-            onClick={() => onTogglePin(a)}
+            onClick={() => onTogglePin(announce)}
             className={`p-1.5 rounded-md transition-colors ${
-              a.pinned
+              announce.pinned
                 ? "text-amber-500 hover:bg-amber-100"
                 : "text-gray-400 hover:bg-gray-100 hover:text-gray-600"
             }`}
           >
-            {a.pinned ? <PinOff size={16} /> : <Pin size={16} />}
+            {announce.pinned ? <PinOff size={16} /> : <Pin size={16} />}
           </button>
         </div>
-        <p className="text-sm text-gray-600 leading-relaxed mb-3">{a.body}</p>
+        <p className="text-sm text-gray-600 leading-relaxed mb-3">{announce.body}</p>
         <div className="flex items-center justify-between">
           <span className="text-xs text-gray-400">
-            โดย {a.author} • {new Date(a.created_at).toLocaleString("en-GB", {
-              day: "2-digit", month: "2-digit", year: "numeric",
-              hour: "2-digit", minute: "2-digit",
-              timeZone: "Asia/Bangkok", hour12: false,
-            }).replace(",", "")}
+            โดย {announce.author} • {FormatDate({ date: announce.created_at })}
           </span>
           <Button
             variant="outline"
             size="sm"
             className="text-red-500 border-red-300 hover:bg-red-50 hover:text-red-600"
-            onClick={() => onDelete(a.id)}
+            onClick={() => onDelete(announce.id)}
           >
             <Trash2 size={14} className="mr-1" />
             ลบ

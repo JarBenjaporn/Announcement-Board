@@ -3,6 +3,8 @@ package handlers
 import (
 	"announcement-board/models"
 	"announcement-board/services"
+	"announcement-board/validators"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -36,9 +38,15 @@ func (h *AnnouncementHandler) CreateAnnouncementRequest(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	announcement, err := h.service.CreateAnnouncementService(&req)
+	// validate ข้อมูลก่อนส่งไปให้ service เพื่อสร้างประกาศใหม่ใน database
+	if err := validators.ValidateCreateRequest(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	announcement, err := h.service.CreateAnnouncement(&req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "สร้างประกาศไม่สำเร็จ"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusCreated, announcement)
@@ -53,9 +61,21 @@ func (h *AnnouncementHandler) UpdateAnnouncementRequest(c *gin.Context){
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	announcement, err := h.service.UpdateAnnouncementService(id, &req)
+
+	// validate ข้อมูลใหม่ก่อนส่งไปให้ service เพื่อแก้ไขประกาศใน database
+	if err := validators.ValidateCreateRequest(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	announcement, err := h.service.UpdateAnnouncement(id, &req)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "แก้ไขประกาศไม่สำเร็จ"})
+		var notFound *models.NotFoundError
+		if errors.As(err, &notFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "แก้ไขประกาศไม่สำเร็จ"})
 		return
 	}
 	c.JSON(http.StatusOK, announcement)
@@ -65,8 +85,13 @@ func (h *AnnouncementHandler) UpdateAnnouncementRequest(c *gin.Context){
 // announcement/:id
 func (h *AnnouncementHandler) DeleteAnnouncementRequest(c *gin.Context){
 	id := c.Param("id")
-	if err := h.service.DeleteAnnouncementService(id); err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "ลบประกาศไม่สำเร็จ"})
+	if err := h.service.DeleteAnnouncement(id); err != nil {
+		var notFound *models.NotFoundError
+		if errors.As(err, &notFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "ลบประกาศไม่สำเร็จ"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "ลบประกาศสำเร็จ"})

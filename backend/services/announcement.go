@@ -3,17 +3,15 @@ package services
 import (
 	"announcement-board/models"
 	"announcement-board/repositories"
-	"errors"
-	"strings"
 )
 
 // business logic ไว้คุยกับ repository เพื่อดึงข้อมูลจาก database มาแปรรูปก่อนส่งไปให้ handler
 type AnnouncementService struct {
-	repo repositories.AnnouncementRepositoryInterface
+	repo repositories.AnnouncementRepository
 }
 
 // สร้าง instance ของ AnnouncementService
-func NewAnnouncementService(repo repositories.AnnouncementRepositoryInterface) *AnnouncementService {
+func NewAnnouncementService(repo repositories.AnnouncementRepository) *AnnouncementService {
 	return &AnnouncementService{repo: repo}
 }
 
@@ -23,10 +21,8 @@ func (s *AnnouncementService) GetAll() ([]models.Announcement, error) {
 }
 
 // สร้างประกาศใหม่
-func (s *AnnouncementService) CreateAnnouncementService(req *models.CreateRequest) (*models.Announcement, error) {
-	if strings.TrimSpace(req.Title) == "" || strings.TrimSpace(req.Body) == "" || strings.TrimSpace(req.Author) == ""{
-		return nil, errors.New("title, body, and author are required")
-	}
+func (s *AnnouncementService) CreateAnnouncement(req *models.CreateRequest) (*models.Announcement, error) {
+	
 	announcement := &models.Announcement{
 		Title:  req.Title,
 		Body:   req.Body,
@@ -38,23 +34,23 @@ func (s *AnnouncementService) CreateAnnouncementService(req *models.CreateReques
 }
 
 // แก้ไขประกาศ
-func (s *AnnouncementService) UpdateAnnouncementService(id string, req *models.CreateRequest) (*models.Announcement, error) {
+func (s *AnnouncementService) UpdateAnnouncement(id string, req *models.CreateRequest) (*models.Announcement, error) {
 	announcement, err := s.repo.FindByID(id)
 	if err != nil {
-		return nil, errors.New("announcement not found")
+		return nil, &models.NotFoundError{Resource: "announcement", ID: id}
 	}
 	err = s.repo.UpdateAnnouncement(announcement, req)
 	return announcement, err
 }	
 
 // ลบประกาศ
-func (s *AnnouncementService) DeleteAnnouncementService(id string) error {
+func (s *AnnouncementService) DeleteAnnouncement(id string) error {
 	found, err := s.repo.DeleteAnnouncement(id)
 	if err != nil {
 		return err
 	}
 	if !found {
-		return errors.New("announcement not found")
+		return &models.NotFoundError{Resource: "announcement", ID: id}
 	}
 	return nil
 }
